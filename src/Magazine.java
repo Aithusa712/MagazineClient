@@ -30,7 +30,7 @@ public class Magazine {
 				weeklyCosts += supplements.get(i).getWeeklyCost();
 			}
 		}
-		// new
+
 		return weeklyCosts;
 	}
 
