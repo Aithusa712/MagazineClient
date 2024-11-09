@@ -90,35 +90,21 @@ public class Client extends Application {
 
         viewBtn.setOnAction(event -> {
 
-            // For Loop to find and remove the node/container at the first row in the
-            // mainLayoutPane
-            for (Node node : mainLayoutPane.getChildren()) {
-                if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
-                    mainLayoutPane.getChildren().remove(node);
-                    break;
-                }
-            }
+            // Call removeNode method
+            removeNode(mainLayoutPane);
             // Change to LayoutPane
             mainLayoutPane.add(viewLayoutPane, 0, 1);
         });
 
         editBtn.setOnAction(event -> {
-            for (Node node : mainLayoutPane.getChildren()) {
-                if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
-                    mainLayoutPane.getChildren().remove(node);
-                }
-            }
+            removeNode(mainLayoutPane);
             mainLayoutPane.add(editLayoutPane, 0, 1);
 
         });
 
         createBtn.setOnAction(event -> {
-            for (Node node : mainLayoutPane.getChildren()) {
-                if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
-                    mainLayoutPane.getChildren().remove(node);
-                    break;
-                }
-            }
+
+            removeNode(mainLayoutPane);
             mainLayoutPane.add(createLayoutPane, 0, 1);
 
         });
@@ -127,6 +113,17 @@ public class Client extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    // For Loop method to find and remove the node/container at the first row of the
+    // gridPane
+    public static void removeNode(GridPane mainLayoutPane) {
+        for (Node node : mainLayoutPane.getChildren()) {
+            if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
+                mainLayoutPane.getChildren().remove(node);
+                break;
+            }
+        }
     }
 
     // Method to build the viewLayout GridPane
@@ -695,18 +692,50 @@ public class Client extends Application {
 
         // Create Buttons for selecting the edit option
         Button editSupplementButton = new Button("Edit Supplement");
+        editSupplementButton.setStyle("-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px; " +
+                "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30; -fx-border-width: 2;-fx-border-color: Black;");
         Button editCustomerButton = new Button("Edit Customer");
+        editCustomerButton.setStyle("-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px; " +
+                "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30;-fx-border-width: 2;-fx-border-color: Black;");
         Button editMagazineButton = new Button("Edit Magazine");
+        editMagazineButton.setStyle("-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px; " +
+                "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30;-fx-border-width: 2;-fx-border-color: Black;");
         Button editAddSupplementButton = new Button("Add Supplement");
+        editAddSupplementButton.setStyle("-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px; "
+                +
+                "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30;-fx-border-width: 2;-fx-border-color: Black;");
         Button editSaveButton = new Button("Save to File");
+        editSaveButton.setStyle(
+                "-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px;-fx-border-width: 2;-fx-border-color: Black; "
+                        +
+                        "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30;");
+
+        double buttonWidth = 200; // You can adjust this value as needed
+
+        // Set the same width for all buttons
+        editSupplementButton.setPrefWidth(buttonWidth);
+        editCustomerButton.setPrefWidth(buttonWidth);
+        editMagazineButton.setPrefWidth(buttonWidth);
+        editAddSupplementButton.setPrefWidth(buttonWidth);
+        editSaveButton.setPrefWidth(buttonWidth);
+
+        editSupplementButton.setMinWidth(buttonWidth);
+        editCustomerButton.setMinWidth(buttonWidth);
+        editMagazineButton.setMinWidth(buttonWidth);
+        editAddSupplementButton.setMinWidth(buttonWidth);
+        editSaveButton.setMinWidth(buttonWidth);
 
         // Add the buttons to the layout
-        editLayoutPane.add(editSupplementButton, 0, 0);
-        editLayoutPane.add(editCustomerButton, 0, 1);
-        editLayoutPane.add(editMagazineButton, 0, 2);
-        editLayoutPane.add(editAddSupplementButton, 0, 3);
-        editLayoutPane.add(editSaveButton, 0, 4);
-        editLayoutPane.setVgap(10);
+
+        VBox buttonBox = new VBox(15);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.getChildren().addAll(
+                editSupplementButton,
+                editCustomerButton,
+                editMagazineButton,
+                editAddSupplementButton,
+                editSaveButton);
+        editLayoutPane.add(buttonBox, 0, 0);
 
         // Add event handlers for buttons
         editSupplementButton.setOnAction(event -> showEditSupplementDialog(stage, editLayoutPane, viewLayoutPane,
