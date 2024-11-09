@@ -1,6 +1,6 @@
 # About this
 
-This java project is an assignment for my Software Architectures modules. The task is to create a Magazine Service Client
+This java project is an assignment for my Software Architectures module. The task is to create a Magazine Service Client
 with a fully working GUI that can perform CRUD functions. The application is able to load and save the current session into a csv file
 for later use. The application is made using JavaFX, all coded without any help of GUI visual tools such as Scene Builder
 
