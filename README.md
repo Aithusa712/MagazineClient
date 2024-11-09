@@ -104,7 +104,7 @@ Inside the workspace directory, I have 2 csv files:
 
 ### The data to be saved (Changes: added new supplement named testSupplement and new paying customer named kimPaying).
 
-    ![image](https://github.com/user-attachments/assets/031fa6f4-5d6d-47dc-85de-4e3e6abb9fbf)
+![image](https://github.com/user-attachments/assets/031fa6f4-5d6d-47dc-85de-4e3e6abb9fbf)
 
 ### Navigate to folder you want to save the data to
 
