@@ -84,7 +84,7 @@ Inside the workspace directory, I have 2 csv files:
 
 ### Create Supplement Results
 
-![image](https://github.com/user-attachments/assets/b8b2c8bd-3172-4f7d-9724-a37ad19bef40)
+![image](https://github.com/user-attachments/assets/21dd74c9-85be-4043-bf59-830ebbcf98fb)
 
 ![image](https://github.com/user-attachments/assets/1a18eaf4-26ed-4294-8b26-b45792eb69fe)
 
