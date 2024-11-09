@@ -1,10 +1,10 @@
-### About this
+# About this
 
 This java project is an assignment for my Software Architectures modules. The task is to create a Magazine Service Client
 with a fully working GUI that can perform CRUD functions. The application is able to load and save the current session into a csv file
 for later use. The application is made using JavaFX, all coded without any help of GUI visual tools such as Scene Builder
 
-### Folder Structure
+# Folder Structure
 
 The workspace contains three folders by default, where:
 
@@ -18,7 +18,7 @@ Inside the workspace directory, I have 2 csv files:
   this shouldn't be used for saving. It is exists only to be a backup and testing.
 - `testSaveData.csv`: is the actual test data to be used for loading and saving current or existing sessions.
 
-### Installation and running
+# Installation and running
 
 - To compile the Application, open your terminal into the workspace/project directory
 
@@ -35,7 +35,7 @@ Inside the workspace directory, I have 2 csv files:
 
   ![image](https://github.com/user-attachments/assets/0d72b16a-2637-472a-b685-838a9ac30001)
 
-### How-to
+# How-to
 
 - To use the program you will need to load the data. There are two ways to do it:
 
@@ -64,23 +64,23 @@ Inside the workspace directory, I have 2 csv files:
 
 - In the create Layout you can select between two things to create, a Magazine Supplement or Customer.
 
-# Create Customer Example
+### Create Customer Example
 
 - When you create a customer, that customer will automatically be subscribed to the current magazine issue.
 
 ![image](https://github.com/user-attachments/assets/b2eb1e17-4263-46c8-8d95-84ac58328713)
 
-# Create Customer Results
+### Create Customer Results
 
 ![Screenshot 2024-11-09 151136](https://github.com/user-attachments/assets/51e374de-b836-4fa1-8355-70c901112db3)
 
-# Create Supplement Example
+### Create Supplement Example
 
 - When a supplement is created, it will be stored somewhere temporarily. It will need to be added into a magazine the Edit View to be saved.
 
 ![image](https://github.com/user-attachments/assets/bedd3a31-6388-4d7d-b928-5f465b986700)
 
-# Create Supplement Results
+### Create Supplement Results
 
 ![image](https://github.com/user-attachments/assets/b8b2c8bd-3172-4f7d-9724-a37ad19bef40)
 
@@ -100,19 +100,19 @@ Inside the workspace directory, I have 2 csv files:
 
 ## Save to file and load saved data demo
 
-# The data to be saved (Changes: added new supplement named testSupplement and new paying customer named kimPaying).
+### The data to be saved (Changes: added new supplement named testSupplement and new paying customer named kimPaying).
 
     ![image](https://github.com/user-attachments/assets/031fa6f4-5d6d-47dc-85de-4e3e6abb9fbf)
 
-# Navigate to folder you want to save the data to
+### Navigate to folder you want to save the data to
 
 ![image](https://github.com/user-attachments/assets/ed13704d-c03f-444b-bcd8-b62de5ea01aa)
 
-# Receive Success prompt
+### Receive Success prompt
 
 ![image](https://github.com/user-attachments/assets/933964b6-88f9-4b53-bdd1-b9633cb115e6)
 
-# Restart the application and load previous saved data
+### Restart the application and load previous saved data
 
 - it should contain the data from your previous session.
 
