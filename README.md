@@ -98,7 +98,8 @@ Inside the workspace directory, I have 2 csv files:
   - `Add Supplement`: Add a user-created supplement into a existing magazine.
   - `Save to File`: Save current session, containing all the information loaded and changed.
 
-  ![image](https://github.com/user-attachments/assets/3b1a7462-3a51-4ac3-872f-acbb7afc87fe)
+  ![image](https://github.com/user-attachments/assets/7fcae2d0-8320-4465-958b-3d422df8e625)
+
 
 ## Save to file and load saved data demo
 
@@ -108,7 +109,8 @@ Inside the workspace directory, I have 2 csv files:
 
 ### Navigate to folder you want to save the data to
 
-![image](https://github.com/user-attachments/assets/ed13704d-c03f-444b-bcd8-b62de5ea01aa)
+![image](https://github.com/user-attachments/assets/0e842fd8-9448-413b-8cc0-d5fb4f75a41c)
+
 
 ### Receive Success prompt
 
