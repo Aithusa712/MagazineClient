@@ -27,13 +27,15 @@ Inside the workspace directory, I have 2 csv files:
 - Now copy and paste the command below:
 - For Windows: `$javac --module-path "</path/to/javafx-sdk/lib>" --add-modules javafx.controls,javafx.fxml -d bin .\src\*.java`
 - For Linux: `$javac --module-path "</path/to/javafx-sdk/lib>" --add-modules javafx.controls,javafx.fxml -d bin src/*.java`
+
   ![image](https://github.com/user-attachments/assets/493dd3eb-8c4d-4d67-b98d-ec5d2f0a280e)
 
 - To run the Application, open your terminal into the src folder in the workspace directory and copy and insert the command below:
 - `$java --module-path "</path/to/javafx-sdk/lib>" --add-modules javafx.controls,javafx.fxml -cp bin Client`
-- note: you will need to add the path to your own javafx-sdk lib directory
 
   ![image](https://github.com/user-attachments/assets/0d72b16a-2637-472a-b685-838a9ac30001)
+
+  - note: you will need to add the path to your own javafx-sdk lib directory
 
 # How-to
 
