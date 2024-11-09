@@ -33,49 +33,6 @@ import java.util.Scanner;
 
 public class Client extends Application {
 
-    public static void loadMenu(Stage stage, ArrayList<Magazine> magazines,
-            ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
-
-        // Create the dialog
-        Dialog<Void> loadDialog = new Dialog<>();
-        loadDialog.setTitle("Load Data");
-        loadDialog.setHeaderText("Choose an option");
-
-        // Create a container (VBox) to hold buttons
-        HBox hbox = new HBox(10); // 10 is the spacing between buttons
-        hbox.setAlignment(Pos.CENTER);
-
-        // Create the "Load From File" button
-        Button loadFromFileButton = new Button("Load From File");
-        loadFromFileButton.setOnAction(event -> {
-            // Load data from file and close the dialog
-            loadDataFromFile(stage, magazines, payingCustomer, associateCustomer);
-            loadDialog.close(); // Close the dialog when done
-        });
-
-        // Create the "Load Hard Coded Data" button
-        Button loadHardCodedButton = new Button("Load Hard Coded Data");
-        loadHardCodedButton.setOnAction(event -> {
-            // Load hard coded data and close the dialog
-            loadData(magazines, payingCustomer, associateCustomer);
-            loadDialog.close(); // Close the dialog when done
-        });
-
-        // Add buttons to the VBox container
-        hbox.getChildren().addAll(loadFromFileButton, loadHardCodedButton);
-
-        // Set the VBox as the content of the dialog
-        loadDialog.getDialogPane().setContent(hbox);
-
-        // Add a button for closing the dialog manually (if needed)
-        loadDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-
-        // Set the close handler for the "Cancel" button (just in case)
-
-        // Show the dialog and block until user interaction
-        loadDialog.showAndWait(); // This line blocks and waits for user interaction
-    }
-
     @Override
     public void start(Stage stage) {
 
@@ -84,72 +41,71 @@ public class Client extends Application {
         ArrayList<Paying> payingCustomer = new ArrayList<Paying>(); // Paying Customer Object
         ArrayList<Associate> associateCustomer = new ArrayList<Associate>(); // Associate Customer Object
         ArrayList<Supplement> tempSupplements = new ArrayList<Supplement>();
+
+        // Prompt Load Menu
         loadMenu(stage, magazines, payingCustomer, associateCustomer);
-        // loadData(magazines, payingCustomer, associateCustomer);
 
         // View Layout GridPane
         GridPane viewLayoutPane = new GridPane();
         viewLayoutPane.setHgap(5);
         viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
-        GridPane editLayoutPane = new GridPane();
-        editPane(stage, editLayoutPane, viewLayoutPane, editLayoutPane, magazines, payingCustomer, associateCustomer,
-                tempSupplements);
+
         GridPane createLayoutPane = new GridPane();
         createLayoutPane.setAlignment(Pos.CENTER);
         createPane(viewLayoutPane, createLayoutPane, magazines, payingCustomer, associateCustomer, tempSupplements);
 
-        GridPane mainLayoutPane = new GridPane();
-        // mainLayoutPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-        mainLayoutPane.setMinSize(500, 600);
-        mainLayoutPane.setPrefSize(500, 600);
-        mainLayoutPane.setPadding(new Insets(10, 10, 10, 10));
-        mainLayoutPane.setVgap(5);
-        mainLayoutPane.setHgap(5);
+        GridPane editLayoutPane = new GridPane();
+        editPane(stage, editLayoutPane, viewLayoutPane, editLayoutPane, magazines, payingCustomer, associateCustomer,
+                tempSupplements);
+
         HBox menuBtnBox = new HBox(10);
-        // menuBtnBox.setStyle("-fx-border-color: purple; -fx-border-width: 2;");
         menuBtnBox.setAlignment(Pos.BASELINE_LEFT);
         menuBtnBox.setMinHeight(30);
         Button viewBtn = new Button("View");
         Button createBtn = new Button("Create");
         Button editBtn = new Button("Edit");
         menuBtnBox.getChildren().addAll(viewBtn, createBtn, editBtn);
+
+        GridPane mainLayoutPane = new GridPane();
+        mainLayoutPane.setMinSize(500, 600);
+        mainLayoutPane.setPrefSize(500, 600);
+        mainLayoutPane.setPadding(new Insets(10, 10, 10, 10));
+        mainLayoutPane.setVgap(5);
+        mainLayoutPane.setHgap(5);
         mainLayoutPane.add(menuBtnBox, 0, 0); // Column 0, Row 0
         mainLayoutPane.add(viewLayoutPane, 0, 1); // Column 0, Row 0
-
-        // Scene
         GridPane.setColumnSpan(menuBtnBox, 2);
 
+        // Scene
         Scene scene = new Scene(mainLayoutPane);
-
         stage.setTitle("Magazine Service");
         stage.setScene(scene);
         stage.show();
+
+        // Close Scanner
         userInput.close();
 
-        // Event Handler
+        // Event Handler (Button Events to change between different Layouts e.g
+        // editLayoutPane, viewLayoutPane, createLayoutPane)
 
         viewBtn.setOnAction(event -> {
-            // Handle the event here
+
+            // For Loop to find and remove the node/container at the first row in the
+            // mainLayoutPane
             for (Node node : mainLayoutPane.getChildren()) {
-                // Check if the node is in the desired position (Row 1, Column 0)
                 if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
-                    // Remove the node
                     mainLayoutPane.getChildren().remove(node);
-                    break; // Once the node is removed, exit the loop
+                    break;
                 }
             }
+            // Change to LayoutPane
             mainLayoutPane.add(viewLayoutPane, 0, 1);
-
         });
 
         editBtn.setOnAction(event -> {
-            // Handle the event here
             for (Node node : mainLayoutPane.getChildren()) {
-                // Check if the node is in the desired position (Row 1, Column 0)
                 if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
-                    // Remove the node
                     mainLayoutPane.getChildren().remove(node);
-                    break; // Once the node is removed, exit the loop
                 }
             }
             mainLayoutPane.add(editLayoutPane, 0, 1);
@@ -157,13 +113,10 @@ public class Client extends Application {
         });
 
         createBtn.setOnAction(event -> {
-            // Handle the event here
             for (Node node : mainLayoutPane.getChildren()) {
-                // Check if the node is in the desired position (Row 1, Column 0)
                 if (GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 0) {
-                    // Remove the node
                     mainLayoutPane.getChildren().remove(node);
-                    break; // Once the node is removed, exit the loop
+                    break;
                 }
             }
             mainLayoutPane.add(createLayoutPane, 0, 1);
@@ -176,8 +129,10 @@ public class Client extends Application {
         launch(args);
     }
 
+    // Method to build the viewLayout GridPane
     public static void viewPane(GridPane viewLayoutPane, ArrayList<Magazine> magazines,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
+        // Refresh the Layout
         viewLayoutPane.getChildren().clear();
         VBox billingPane = new VBox();
         Label informationPanelLabel = new Label("Information Panel:");
@@ -202,12 +157,10 @@ public class Client extends Application {
         subscriptionListView.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
         subscriptionListView.setMinHeight(50);
         subscriptionListView.setMaxHeight(50);
-        // subscriptionListView.setMaxWidth(300);
         ListView<String> associateListView = new ListView<String>();
         associateListView.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
         associateListView.setMinHeight(50);
         associateListView.setMaxHeight(50);
-        // associateListView.setMaxWidth(300);
         ScrollPane supplementList = new ScrollPane(viewSupplement);
         supplementList.setPrefSize(200, 300);
         supplementList.setStyle("-fx-border-color: Black; -fx-border-width: 2;");
@@ -215,7 +168,6 @@ public class Client extends Application {
         customerList.setPrefSize(200, 300);
         customerList.setStyle("-fx-border-color: Black; -fx-border-width: 2; ");
         VBox informationPanelTop = new VBox();
-        // informationPanelTop.setMinSize(200, 400);
         informationPanelTop.setSpacing(10);
         informationPanelTop.setStyle("-fx-background-color: lightblue;");
         informationPanelTop.setPadding(new Insets(5));
@@ -224,17 +176,14 @@ public class Client extends Application {
         VBox informationPanelBottom = new VBox();
         informationPanelBottom
                 .setStyle("-fx-border-color: Black; -fx-border-width: 2; -fx-background-color: transparent;");
-        // informationPanelBottom.setMaxHeight(500);
         informationPanelBottom.setPadding(new Insets(5));
         informationPanelBottom.setSpacing(10);
-
         informationPanelBottom.getChildren().addAll(emptyLabel,
                 customerTypeLabel, customerNameLabel,
                 customerEmailLabel,
                 paymentTypeLabel, weekStartedLabel, subscriptionPromptLabel, subscriptionListView, associatePromptLabel,
                 associateListView, billingBtn);
         billingBtn.setVisible(false);
-
         viewLayoutPane.add(supplementList, 0, 0);
         viewLayoutPane.add(customerList, 0, 1);
         viewLayoutPane.add(informationPanelTop, 1, 0);
@@ -242,8 +191,6 @@ public class Client extends Application {
         GridPane.setRowSpan(informationPanelTop, 2);
         GridPane.setRowSpan(informationPanelBottom, 2);
         viewLayoutPane.setVgap(5);
-        // GridPane.setColumnSpan(informationPanelBottom, 2);
-        // GridPane.setColumnSpan(informationPanelTop, 2);
 
         // Tree view for Supplement
         TreeItem<String> magazineRoot = new TreeItem<>("Magazine");
@@ -291,6 +238,8 @@ public class Client extends Application {
         viewCustomer.setRoot(customerRoot);
 
         viewCustomer.setOnMouseClicked(event -> {
+
+            // Clear all Labels, buttons and other containers
             billingBtn.setVisible(false);
             magazineNamLabel.setText("");
             magazineCostLabel.setText("");
@@ -306,13 +255,13 @@ public class Client extends Application {
             subscriptionListView.getItems().clear();
             associateListView.getItems().clear();
             billingPane.getChildren().clear();
-            // Get the clicked TreeItem from the TreeView
+
+            // Insert information into their corresponding labels based on customer type
             TreeItem<String> selectedItem = viewCustomer.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 String selectedCustomerName = selectedItem.getValue();
                 String paymentType = "N/A";
                 String associate = "N/A";
-                // Find the corresponding supplement based on the selected name
                 Customer selectedCustomer = null;
                 ArrayList<String> subscriptionList = null;
                 ArrayList<String> associateList = null;
@@ -369,16 +318,15 @@ public class Client extends Application {
                         String[] associateArray = (String[]) associateList.toArray(new String[0]);
                         associateListView.getItems().addAll(associateArray);
 
+                        // Calculate BillingTask using multiThreading
                         new BillingTask(magazines, payingCustomer, associateCustomer, selectedCustomerName,
                                 new BillingTask.BillingCallback() {
                                     @Override
                                     public void onBillingComplete(VBox billingVBox) {
                                         billingPane.getChildren().clear();
-                                        // Replace or add the VBox to your layout pane
-                                        // Assuming informationPanelBottom is where you want to show the billing details
                                         billingPane.getChildren().add(billingVBox);
                                     }
-                                }).start(); // Start the thread to calculate and generate the VBox
+                                }).start();
 
                     } else {
                         billingPane.getChildren().clear();
@@ -400,6 +348,8 @@ public class Client extends Application {
         });
 
         viewSupplement.setOnMouseClicked(event -> {
+
+            // Clear all Labels, buttons and other containers
             String magazineName = "";
             Double magazineCost = null;
             String supplementName = "";
@@ -424,7 +374,8 @@ public class Client extends Application {
             if (selectedItem != null) {
                 String selectedSupplementName = selectedItem.getValue();
 
-                // Find the corresponding supplement based on the selected name
+                // Find the corresponding supplement and magazine information based on the
+                // selected name
                 boolean supplementFound = false;
                 for (int i = 0; i < magazines.size(); i++) {
                     for (int j = 0; j < magazines.get(i).getSupplementCount(); j++) {
@@ -439,7 +390,7 @@ public class Client extends Application {
                     }
                 }
 
-                // Display the supplement's details in the information panel
+                // Display details in the information panel
                 if (supplementFound) {
 
                     supplementNameLabel.setText("Supplement Name: " + supplementName);
@@ -450,7 +401,7 @@ public class Client extends Application {
                 }
             }
         });
-
+        // Prompt billing information for paying customer when pressed
         billingBtn.setOnAction(event -> {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Customer Billing History");
@@ -460,10 +411,12 @@ public class Client extends Application {
         });
     }
 
+    // Method to build the create Layout Pane
     public static void createPane(GridPane viewLayoutPane, GridPane createLayoutPane, ArrayList<Magazine> magazines,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer,
             ArrayList<Supplement> tempSupplements) {
 
+        // Refresh create Layout
         createLayoutPane.getChildren().clear();
 
         VBox supplementFieldBox = new VBox();
@@ -610,6 +563,7 @@ public class Client extends Application {
             }
         });
 
+        // Validation and insertion of data process for Supplement Field
         submitMagazineButton.setOnAction(event -> {
             boolean valid = true;
             String message = "";
@@ -633,20 +587,15 @@ public class Client extends Application {
             }
 
             if (valid) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Form Submitted");
-                alert.setHeaderText("Successfully added Supplement");
-                alert.showAndWait();
+
+                showSuccess("Form Submitted", "Successfully added Supplement");
                 supplementName = supplementNameField.getText();
                 supplementCost = Double.parseDouble(check);
                 Supplement temp = new Supplement(supplementName, supplementCost);
                 tempSupplements.add(temp);
 
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Form Validation");
-                alert.setContentText(message);
-                alert.showAndWait();
+                showAlert("Form Validation", message);
                 supplementNameField.clear();
                 weeklyCostField.clear();
 
@@ -656,7 +605,7 @@ public class Client extends Application {
 
         });
 
-        // Submit Customer Button Event
+        // Validation and insertion of data process for Customer Field
         submitCustomerButton.setOnAction(event -> {
 
             boolean userExist = false;
@@ -694,10 +643,7 @@ public class Client extends Application {
             }
 
             if (valid) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Form Submitted");
-                alert.setHeaderText("Successfully added Customer");
-                alert.showAndWait();
+                showSuccess("Form Submitted", "Successfully added Customer");
 
                 if (customerType.equals("Paying")) {
                     payingCustomer.add(new Paying(name, email, 3, paymentType));
@@ -725,13 +671,11 @@ public class Client extends Application {
                 viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
 
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Form Validation");
-                alert.setContentText(message);
-                alert.showAndWait();
+
                 nameField.clear();
                 emailField.clear();
                 subscriptionCombo.setValue("N/A");
+                showAlert("Form Validation", message);
 
             }
 
@@ -739,56 +683,14 @@ public class Client extends Application {
 
     }
 
-    public static void loadData(ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer,
-            ArrayList<Associate> associateCustomer) {
-
-        // Note Magazine = Weekly Cost | week | Name
-        magazines.add(new Magazine(50, 0, "MagWeek01"));
-        magazines.add(new Magazine(50, 1, "MagWeek02"));
-        magazines.add(new Magazine(50, 2, "MagWeek03"));
-        magazines.add(new Magazine(50, 3, "MagWeek04"));
-
-        magazines.get(0).setSupplement(new Supplement("TechTrends Weekly", 4.99));
-        magazines.get(1).setSupplement(new Supplement("Fitness Focus", 3.50));
-        magazines.get(2).setSupplement(new Supplement("Travel Explorer", 5.25));
-        magazines.get(3).setSupplement(new Supplement("Culinary Delights", 3.75));
-
-        // Note Paying = Name | Email | Week Started | Payment Method
-        payingCustomer.add(new Paying("Olivia Bennett", "olivia.bennett@example.com", 0, "Debit Card"));
-        payingCustomer.add(new Paying("Liam Harris", "liam.harris@example.com", 0, "Credit Card"));
-        payingCustomer.add(new Paying("Emma Walker", "emma.walker@example.com", 0, "Credit Card"));
-
-        // Note Associate = Name | Email | Week Started | Associated Customer | Paying
-        // ArrayList
-        associateCustomer.add(new Associate("Noah Turner", "noah.turner@example.com", 0, "Olivia Bennet",
-                payingCustomer));
-        associateCustomer.add(new Associate("Sophia Mitchell", "sophia.mitchell@example.com", 0, "Liam Harris",
-                payingCustomer));
-        associateCustomer.add(new Associate("James Carter", "james.carter@example.com", 0, "Emma Walker",
-                payingCustomer));
-
-        payingCustomer.get(0).setSubscription("TechTrends Weekly");
-        payingCustomer.get(0).setSubscription("Fitness Focus");
-        payingCustomer.get(1).setSubscription("Culinary Delights");
-        payingCustomer.get(1).setSubscription("TechTrends Weekly");
-        payingCustomer.get(2).setSubscription("Travel Explorer");
-
-        associateCustomer.get(0).setSubscription("TechTrends Weekly");
-        associateCustomer.get(1).setSubscription("Fitness Focus");
-        associateCustomer.get(1).setSubscription("TechTrends Weekly");
-        associateCustomer.get(1).setSubscription("Travel Explorer");
-        associateCustomer.get(2).setSubscription("TechTrends Weekly");
-        associateCustomer.get(2).setSubscription("Culinary Delights");
-
-    }
-
+    // Method build the edit Layout Pane
     public static void editPane(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane,
             ArrayList<Magazine> magazines,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer,
             ArrayList<Supplement> tempSupplements) {
 
-        // Clear the existing content in the editLayoutPane
+        // Refresh Layout
         editLayoutPane.getChildren().clear();
 
         // Create Buttons for selecting the edit option
@@ -804,8 +706,6 @@ public class Client extends Application {
         editLayoutPane.add(editMagazineButton, 0, 2);
         editLayoutPane.add(editAddSupplementButton, 0, 3);
         editLayoutPane.add(editSaveButton, 0, 4);
-
-        // Add space between buttons
         editLayoutPane.setVgap(10);
 
         // Add event handlers for buttons
@@ -835,7 +735,7 @@ public class Client extends Application {
             GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
-        // Create a dialog
+
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Edit Supplement");
 
@@ -857,36 +757,29 @@ public class Client extends Application {
         supplementCombo.getItems().addAll(tempSubList);
         supplementCombo.setValue("");
 
-        // Set the button types
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType removeButtonType = new ButtonType("Remove", ButtonBar.ButtonData.APPLY);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType, removeButtonType);
 
-        // Create a VBox for the form contents
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(10));
 
-        // TextField for supplement name
         TextField supplementNameField = new TextField();
         supplementNameField.setPromptText("Enter Supplement Name");
 
-        // TextField for supplement cost
         TextField supplementCostField = new TextField();
         supplementCostField.setPromptText("Enter Supplement Cost");
 
-        // Add fields to the form layout
         vbox.getChildren().addAll(supplementComboLabel, supplementCombo, supplementNameField, supplementCostField);
 
-        // Add the form to the dialog
         dialog.getDialogPane().setContent(vbox);
 
-        // Handle Save button click
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
 
                 try {
-                    // Save or update the supplement data
+
                     String supplementName = supplementNameField.getText();
                     double supplementCost = Double.parseDouble(supplementCostField.getText());
                     for (int i = 0; i < magazines.size(); i++) {
@@ -910,8 +803,6 @@ public class Client extends Application {
                     }
 
                     System.out.println("Saving Supplement: " + supplementName + " with cost: " + supplementCost);
-
-                    // You can update the tempSupplements list here if needed
 
                 } catch (NumberFormatException e) {
                     showAlert("Invalid input", "Supplement cost must be a valid number.");
@@ -970,10 +861,9 @@ public class Client extends Application {
 
             }
             supplementCostField.setText(Double.toString(cost));
-            // You can now perform any action based on the selected item
+
         });
 
-        // Show the dialog and wait for a response
         dialog.showAndWait();
     }
 
@@ -981,18 +871,16 @@ public class Client extends Application {
     public static void showEditCustomerDialog(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
-        // Create a dialog
+
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Edit Customer");
 
-        // Set the button types
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType removeButtonType = new ButtonType("Remove", ButtonBar.ButtonData.APPLY);
 
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType, removeButtonType);
 
-        // Create a VBox for the form contents
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(10));
 
@@ -1009,21 +897,16 @@ public class Client extends Application {
         customerCombo.getItems().addAll(customerList);
         customerCombo.setValue("");
 
-        // TextField for customer name
         TextField customerNameField = new TextField();
         customerNameField.setPromptText("Enter Customer Name");
 
-        // TextField for customer email
         TextField customerEmailField = new TextField();
         customerEmailField.setPromptText("Enter Customer Email");
 
-        // Add fields to the form layout
         vbox.getChildren().addAll(customerComboLabel, customerCombo, customerNameField, customerEmailField);
 
-        // Add the form to the dialog
         dialog.getDialogPane().setContent(vbox);
 
-        // Handle Save button click
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 String customerName = customerNameField.getText();
@@ -1038,9 +921,8 @@ public class Client extends Application {
                         associateCustomer.get(i).editCustomer(customerName, customerEmail);
                     }
                 }
-                // Save or update the customer data
+
                 System.out.println("Saving Customer: " + customerName + " with email: " + customerEmail);
-                // Add logic here to save the customer info to your list
 
             }
             if (dialogButton == removeButtonType) {
@@ -1090,27 +972,22 @@ public class Client extends Application {
 
             customerEmailField.setText(tempEmail);
 
-            // You can now perform any action based on the selected item
         });
 
-        // Show the dialog and wait for a response
         dialog.showAndWait();
     }
 
-    // Show the custom dialog for editing a magazine
     public static void showEditMagazineDialog(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
-        // Create a dialog
+
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Edit Magazine");
 
-        // Set the button types
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
 
-        // Create a VBox for the form contents
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(10));
 
@@ -1125,21 +1002,16 @@ public class Client extends Application {
         magazineCombo.getItems().addAll(magazineList);
         magazineCombo.setValue("");
 
-        // TextField for magazine name
         TextField magazineNameField = new TextField();
         magazineNameField.setPromptText("Enter Magazine Name");
 
-        // TextField for magazine cost
         TextField magazineCostField = new TextField();
         magazineCostField.setPromptText("Enter Magazine Cost");
 
-        // Add fields to the form layout
         vbox.getChildren().addAll(magazineComboLabel, magazineCombo, magazineNameField, magazineCostField);
 
-        // Add the form to the dialog
         dialog.getDialogPane().setContent(vbox);
 
-        // Handle Save button click
         dialog.setResultConverter(dialogButton -> {
             String magazineName = magazineNameField.getText();
             String magazineCostText = magazineCostField.getText();
@@ -1147,7 +1019,7 @@ public class Client extends Application {
             if (dialogButton == saveButtonType) {
 
                 try {
-                    // Save or update the magazine data
+
                     for (int i = 0; i < magazines.size(); i++) {
                         if (magazines.get(i).getMagazineName().equalsIgnoreCase(magazineCombo.getValue())) {
                             magazines.get(i).editMagazine(magazineName, magazineCost);
@@ -1156,7 +1028,7 @@ public class Client extends Application {
                         }
                     }
                     System.out.println("Saving Magazine: " + magazineName + " with cost: " + magazineCost);
-                    // You can update magazines list here
+
                 } catch (NumberFormatException e) {
                     showAlert("Invalid input", "Magazine cost must be a valid number.");
                 }
@@ -1179,10 +1051,8 @@ public class Client extends Application {
                 }
             }
 
-            // You can now perform any action based on the selected item
         });
 
-        // Show the dialog and wait for a response
         dialog.showAndWait();
     }
 
@@ -1192,12 +1062,10 @@ public class Client extends Application {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Edit Magazine");
 
-        // Set the button types
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
 
-        // Create a VBox for the form contents
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(10));
 
@@ -1220,19 +1088,15 @@ public class Client extends Application {
         supplementCombo.getItems().addAll(tempSupplementList);
         supplementCombo.setValue("");
 
-        // Add fields to the form layout
         vbox.getChildren().addAll(magazineComboLabel, magazineCombo, supplementComboLabel, supplementCombo);
 
-        // Add the form to the dialog
         dialog.getDialogPane().setContent(vbox);
 
-        // Handle Save button click
         dialog.setResultConverter(dialogButton -> {
             String magazineName = magazineCombo.getValue();
             String targetSupplement = supplementCombo.getValue();
             double tempSupplementCost = 0.0f;
             if (dialogButton == saveButtonType) {
-                // Save or update the magazine data
 
                 for (int i = 0; i < tempSupplements.size(); i++) {
                     if (tempSupplements.get(i).getName().equalsIgnoreCase(targetSupplement)) {
@@ -1258,16 +1122,46 @@ public class Client extends Application {
             return null;
         });
 
-        // Show the dialog and wait for a response
         dialog.showAndWait();
 
+    }
+
+    public static void loadMenu(Stage stage, ArrayList<Magazine> magazines,
+            ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
+
+        Dialog<Void> loadDialog = new Dialog<>();
+        loadDialog.setTitle("Load Data");
+        loadDialog.setHeaderText("Choose an option");
+
+        HBox hbox = new HBox(10);
+        hbox.setAlignment(Pos.CENTER);
+
+        Button loadFromFileButton = new Button("Load From File");
+        loadFromFileButton.setOnAction(event -> {
+
+            loadDataFromFile(stage, magazines, payingCustomer, associateCustomer);
+            loadDialog.close();
+        });
+
+        Button loadHardCodedButton = new Button("Load Hard Coded Data");
+        loadHardCodedButton.setOnAction(event -> {
+            loadData(magazines, payingCustomer, associateCustomer);
+            loadDialog.close();
+        });
+
+        hbox.getChildren().addAll(loadFromFileButton, loadHardCodedButton);
+
+        loadDialog.getDialogPane().setContent(hbox);
+
+        loadDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+
+        loadDialog.showAndWait();
     }
 
     public static File chooseFile(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 
-        // Open the file chooser and return the selected file
         return fileChooser.showOpenDialog(stage);
     }
 
@@ -1281,22 +1175,17 @@ public class Client extends Application {
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                // Split the line by commas to get the data fields
+
                 String[] fields = line.split(",");
 
-                // Example: Assuming the CSV has a specific format (could be customized)
-                // Format example:
-                // Type, Name, Email, Week Started, Payment Method, Magazine Name (etc.)
-
                 if (fields[0].equalsIgnoreCase("Magazine")) {
-                    // Parse Magazine data
+
                     String name = fields[1];
                     double weeklyCost = Double.parseDouble(fields[2]);
                     int week = Integer.parseInt(fields[3]);
                     Magazine magazine = new Magazine(weeklyCost, week, name);
                     magazines.add(magazine);
 
-                    // Optionally parse supplement data if present
                     if (fields.length > 4) {
 
                         for (int i = 4; i < fields.length; i += 2) {
@@ -1306,7 +1195,7 @@ public class Client extends Application {
                         }
                     }
                 } else if (fields[0].equalsIgnoreCase("Paying")) {
-                    // Parse Paying customer data
+
                     String name = fields[1];
                     String email = fields[2];
                     int weekStarted = Integer.parseInt(fields[3]);
@@ -1314,24 +1203,21 @@ public class Client extends Application {
                     Paying paying = new Paying(name, email, weekStarted, paymentMethod);
                     payingCustomer.add(paying);
 
-                    // Optional: Handle subscription parsing if applicable
                     if (fields.length > 5) {
                         for (int i = 5; i < fields.length; i++) {
                             paying.setSubscription(fields[i]);
                         }
                     }
                 } else if (fields[0].equalsIgnoreCase("Associate")) {
-                    // Parse Associate customer data
+
                     String name = fields[1];
                     String email = fields[2];
                     int weekStarted = Integer.parseInt(fields[3]);
                     String associatedCustomer = fields[4];
 
-                    // Find the Paying customer that matches the associated customer
                     Associate associate = new Associate(name, email, weekStarted, associatedCustomer, payingCustomer);
                     associateCustomer.add(associate);
 
-                    // Optional: Handle subscription parsing if applicable
                     if (fields.length > 5) {
                         for (int i = 5; i < fields.length; i++) {
                             associate.setSubscription(fields[i]);
@@ -1344,7 +1230,6 @@ public class Client extends Application {
         }
     }
 
-    // You can call this function to choose the file and load the data
     public static void loadDataFromFile(Stage stage, ArrayList<Magazine> magazines,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
         File file = chooseFile(stage);
@@ -1353,31 +1238,26 @@ public class Client extends Application {
 
     public static void saveDataToFile(Stage stage, ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomers,
             ArrayList<Associate> associateCustomers) {
-        // Create a FileChooser to prompt the user for a save location
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 
-        // Show the save dialog and get the file
         File file = fileChooser.showSaveDialog(stage);
 
-        // If the user selects a file, proceed to save data
         if (file != null) {
             try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-                // Save magazines
+
+                // Add Magazines
                 for (int i = 0; i < magazines.size(); i++) {
                     Magazine magazine = magazines.get(i);
                     StringBuilder line = new StringBuilder(String.format("Magazine,%s,%.2f,%d",
-                            magazine.getMagazineName(), // Assuming week number is 1-indexed
+                            magazine.getMagazineName(),
                             magazine.getMagazineCost(),
-                            i // Index is the current index in the list
-                    ));
-
+                            i));
                     // Add supplements if any
-                    for (int j = 0; j < magazine.getSupplementCount(); j++) { // Use getSupplementCount() instead of
-                                                                              // getSupplementSize()
-                        String supplementName = magazine.getSupplementIndex(j); // Get supplement name
-                        double supplementCost = magazine.getSupplementCost(supplementName); // Get supplement cost for
-                                                                                            // this supplement
+                    for (int j = 0; j < magazine.getSupplementCount(); j++) {
+                        String supplementName = magazine.getSupplementIndex(j);
+                        double supplementCost = magazine.getSupplementCost(supplementName);
                         line.append(",").append(supplementName).append(",").append(
                                 String.format("%.2f", supplementCost));
                     }
@@ -1385,7 +1265,7 @@ public class Client extends Application {
                     writer.println(line.toString());
                 }
 
-                // Save paying customers
+                // Add paying customers
                 for (Paying paying : payingCustomers) {
                     StringBuilder line = new StringBuilder(String.format("Paying,%s,%s,%d,%s",
                             paying.getName(),
@@ -1399,7 +1279,7 @@ public class Client extends Application {
                     writer.println(line.toString());
                 }
 
-                // Save associate customers
+                // Add associate customers
                 for (Associate associate : associateCustomers) {
                     StringBuilder line = new StringBuilder(String.format("Associate,%s,%s,%d,%s",
                             associate.getName(),
@@ -1414,25 +1294,67 @@ public class Client extends Application {
                 }
 
                 // Show success alert
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Success");
-                alert.setHeaderText(null);
-                alert.setContentText("Data successfully saved to " + file.getAbsolutePath());
-                alert.showAndWait();
+                showSuccess("Success", "Data successfully saved to " + file.getAbsolutePath());
 
             } catch (IOException e) {
                 // Handle file writing error
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("File Save Error");
-                alert.setContentText("There was an error saving the file: " + e.getMessage());
-                alert.showAndWait();
+                showAlert("File Save Error", "There was an error saving the file: " + e.getMessage());
             }
         }
     }
 
+    public static void loadData(ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer,
+            ArrayList<Associate> associateCustomer) {
+
+        // Note Magazine = Weekly Cost | week | Name
+        magazines.add(new Magazine(50, 0, "MagWeek01"));
+        magazines.add(new Magazine(50, 1, "MagWeek02"));
+        magazines.add(new Magazine(50, 2, "MagWeek03"));
+        magazines.add(new Magazine(50, 3, "MagWeek04"));
+
+        magazines.get(0).setSupplement(new Supplement("TechTrends Weekly", 4.99));
+        magazines.get(1).setSupplement(new Supplement("Fitness Focus", 3.50));
+        magazines.get(2).setSupplement(new Supplement("Travel Explorer", 5.25));
+        magazines.get(3).setSupplement(new Supplement("Culinary Delights", 3.75));
+
+        // Note Paying = Name | Email | Week Started | Payment Method
+        payingCustomer.add(new Paying("Olivia Bennett", "olivia.bennett@example.com", 0, "Debit Card"));
+        payingCustomer.add(new Paying("Liam Harris", "liam.harris@example.com", 0, "Credit Card"));
+        payingCustomer.add(new Paying("Emma Walker", "emma.walker@example.com", 0, "Credit Card"));
+
+        // Note Associate = Name | Email | Week Started | Associated Customer | Paying
+        // ArrayList
+        associateCustomer.add(new Associate("Noah Turner", "noah.turner@example.com", 0, "Olivia Bennet",
+                payingCustomer));
+        associateCustomer.add(new Associate("Sophia Mitchell", "sophia.mitchell@example.com", 0, "Liam Harris",
+                payingCustomer));
+        associateCustomer.add(new Associate("James Carter", "james.carter@example.com", 0, "Emma Walker",
+                payingCustomer));
+
+        payingCustomer.get(0).setSubscription("TechTrends Weekly");
+        payingCustomer.get(0).setSubscription("Fitness Focus");
+        payingCustomer.get(1).setSubscription("Culinary Delights");
+        payingCustomer.get(1).setSubscription("TechTrends Weekly");
+        payingCustomer.get(2).setSubscription("Travel Explorer");
+
+        associateCustomer.get(0).setSubscription("TechTrends Weekly");
+        associateCustomer.get(1).setSubscription("Fitness Focus");
+        associateCustomer.get(1).setSubscription("TechTrends Weekly");
+        associateCustomer.get(1).setSubscription("Travel Explorer");
+        associateCustomer.get(2).setSubscription("TechTrends Weekly");
+        associateCustomer.get(2).setSubscription("Culinary Delights");
+
+    }
+
     public static void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public static void showSuccess(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
