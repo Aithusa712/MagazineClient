@@ -21,12 +21,60 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client extends Application {
+
+    public static void loadMenu(Stage stage, ArrayList<Magazine> magazines,
+            ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
+
+        // Create the dialog
+        Dialog<Void> loadDialog = new Dialog<>();
+        loadDialog.setTitle("Load Data");
+        loadDialog.setHeaderText("Choose an option");
+
+        // Create a container (VBox) to hold buttons
+        HBox hbox = new HBox(10); // 10 is the spacing between buttons
+        hbox.setAlignment(Pos.CENTER);
+
+        // Create the "Load From File" button
+        Button loadFromFileButton = new Button("Load From File");
+        loadFromFileButton.setOnAction(event -> {
+            // Load data from file and close the dialog
+            loadDataFromFile(stage, magazines, payingCustomer, associateCustomer);
+            loadDialog.close(); // Close the dialog when done
+        });
+
+        // Create the "Load Hard Coded Data" button
+        Button loadHardCodedButton = new Button("Load Hard Coded Data");
+        loadHardCodedButton.setOnAction(event -> {
+            // Load hard coded data and close the dialog
+            loadData(magazines, payingCustomer, associateCustomer);
+            loadDialog.close(); // Close the dialog when done
+        });
+
+        // Add buttons to the VBox container
+        hbox.getChildren().addAll(loadFromFileButton, loadHardCodedButton);
+
+        // Set the VBox as the content of the dialog
+        loadDialog.getDialogPane().setContent(hbox);
+
+        // Add a button for closing the dialog manually (if needed)
+        loadDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+
+        // Set the close handler for the "Cancel" button (just in case)
+
+        // Show the dialog and block until user interaction
+        loadDialog.showAndWait(); // This line blocks and waits for user interaction
+    }
 
     @Override
     public void start(Stage stage) {
@@ -36,14 +84,15 @@ public class Client extends Application {
         ArrayList<Paying> payingCustomer = new ArrayList<Paying>(); // Paying Customer Object
         ArrayList<Associate> associateCustomer = new ArrayList<Associate>(); // Associate Customer Object
         ArrayList<Supplement> tempSupplements = new ArrayList<Supplement>();
-        loadData(magazines, payingCustomer, associateCustomer);
+        loadMenu(stage, magazines, payingCustomer, associateCustomer);
+        // loadData(magazines, payingCustomer, associateCustomer);
 
         // View Layout GridPane
         GridPane viewLayoutPane = new GridPane();
         viewLayoutPane.setHgap(5);
         viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
         GridPane editLayoutPane = new GridPane();
-        editPane(editLayoutPane, viewLayoutPane, editLayoutPane, magazines, payingCustomer, associateCustomer,
+        editPane(stage, editLayoutPane, viewLayoutPane, editLayoutPane, magazines, payingCustomer, associateCustomer,
                 tempSupplements);
         GridPane createLayoutPane = new GridPane();
         createLayoutPane.setAlignment(Pos.CENTER);
@@ -69,7 +118,9 @@ public class Client extends Application {
 
         // Scene
         GridPane.setColumnSpan(menuBtnBox, 2);
+
         Scene scene = new Scene(mainLayoutPane);
+
         stage.setTitle("Magazine Service");
         stage.setScene(scene);
         stage.show();
@@ -731,7 +782,8 @@ public class Client extends Application {
 
     }
 
-    public static void editPane(GridPane editLayoutPane, GridPane viewLayoutPane, GridPane createLayoutPane,
+    public static void editPane(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
+            GridPane createLayoutPane,
             ArrayList<Magazine> magazines,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer,
             ArrayList<Supplement> tempSupplements) {
@@ -744,34 +796,43 @@ public class Client extends Application {
         Button editCustomerButton = new Button("Edit Customer");
         Button editMagazineButton = new Button("Edit Magazine");
         Button editAddSupplementButton = new Button("Add Supplement");
+        Button editSaveButton = new Button("Save to File");
 
         // Add the buttons to the layout
         editLayoutPane.add(editSupplementButton, 0, 0);
         editLayoutPane.add(editCustomerButton, 0, 1);
         editLayoutPane.add(editMagazineButton, 0, 2);
         editLayoutPane.add(editAddSupplementButton, 0, 3);
+        editLayoutPane.add(editSaveButton, 0, 4);
 
         // Add space between buttons
         editLayoutPane.setVgap(10);
 
         // Add event handlers for buttons
-        editSupplementButton.setOnAction(event -> showEditSupplementDialog(editLayoutPane, viewLayoutPane,
+        editSupplementButton.setOnAction(event -> showEditSupplementDialog(stage, editLayoutPane, viewLayoutPane,
                 createLayoutPane, tempSupplements, magazines, payingCustomer, associateCustomer));
 
-        editCustomerButton.setOnAction(event -> showEditCustomerDialog(editLayoutPane, viewLayoutPane, createLayoutPane,
-                tempSupplements, magazines, payingCustomer, associateCustomer));
+        editCustomerButton
+                .setOnAction(event -> showEditCustomerDialog(stage, editLayoutPane, viewLayoutPane, createLayoutPane,
+                        tempSupplements, magazines, payingCustomer, associateCustomer));
 
-        editMagazineButton.setOnAction(event -> showEditMagazineDialog(editLayoutPane, viewLayoutPane, createLayoutPane,
-                tempSupplements, magazines, payingCustomer, associateCustomer));
+        editMagazineButton
+                .setOnAction(event -> showEditMagazineDialog(stage, editLayoutPane, viewLayoutPane, createLayoutPane,
+                        tempSupplements, magazines, payingCustomer, associateCustomer));
 
         editAddSupplementButton
-                .setOnAction(event -> showEditAddSupplementButton(editLayoutPane, viewLayoutPane, createLayoutPane,
-                        tempSupplements, magazines, payingCustomer, associateCustomer));
+                .setOnAction(
+                        event -> showEditAddSupplementButton(stage, editLayoutPane, viewLayoutPane, createLayoutPane,
+                                tempSupplements, magazines, payingCustomer, associateCustomer));
+
+        editSaveButton
+                .setOnAction(event -> saveDataToFile(stage, magazines, payingCustomer, associateCustomer));
 
     }
 
     // Show the custom dialog for editing a supplement
-    private static void showEditSupplementDialog(GridPane editLayoutPane, GridPane viewLayoutPane,
+    public static void showEditSupplementDialog(Stage stage,
+            GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
         // Create a dialog
@@ -888,7 +949,7 @@ public class Client extends Application {
             viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
             createPane(viewLayoutPane, createLayoutPane, magazines, payingCustomer, associateCustomer,
                     tempSupplements);
-            editPane(editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
+            editPane(stage, editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
                     associateCustomer, tempSupplements);
             return null;
         });
@@ -917,7 +978,7 @@ public class Client extends Application {
     }
 
     // Show the custom dialog for editing customer details
-    private static void showEditCustomerDialog(GridPane editLayoutPane, GridPane viewLayoutPane,
+    public static void showEditCustomerDialog(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
         // Create a dialog
@@ -1005,7 +1066,7 @@ public class Client extends Application {
             viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
             createPane(viewLayoutPane, createLayoutPane, magazines, payingCustomer, associateCustomer,
                     tempSupplements);
-            editPane(editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
+            editPane(stage, editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
                     associateCustomer, tempSupplements);
             return null;
         });
@@ -1037,7 +1098,7 @@ public class Client extends Application {
     }
 
     // Show the custom dialog for editing a magazine
-    private static void showEditMagazineDialog(GridPane editLayoutPane, GridPane viewLayoutPane,
+    public static void showEditMagazineDialog(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
         // Create a dialog
@@ -1104,7 +1165,7 @@ public class Client extends Application {
             viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
             createPane(viewLayoutPane, createLayoutPane, magazines, payingCustomer, associateCustomer,
                     tempSupplements);
-            editPane(editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
+            editPane(stage, editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
                     associateCustomer, tempSupplements);
             return null;
         });
@@ -1125,7 +1186,7 @@ public class Client extends Application {
         dialog.showAndWait();
     }
 
-    public static void showEditAddSupplementButton(GridPane editLayoutPane, GridPane viewLayoutPane,
+    public static void showEditAddSupplementButton(Stage stage, GridPane editLayoutPane, GridPane viewLayoutPane,
             GridPane createLayoutPane, ArrayList<Supplement> tempSupplements,
             ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
         Dialog<Void> dialog = new Dialog<>();
@@ -1192,7 +1253,7 @@ public class Client extends Application {
             viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
             createPane(viewLayoutPane, createLayoutPane, magazines, payingCustomer, associateCustomer,
                     tempSupplements);
-            editPane(editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
+            editPane(stage, editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
                     associateCustomer, tempSupplements);
             return null;
         });
@@ -1202,7 +1263,175 @@ public class Client extends Application {
 
     }
 
-    private static void showAlert(String title, String message) {
+    public static File chooseFile(Stage stage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        // Open the file chooser and return the selected file
+        return fileChooser.showOpenDialog(stage);
+    }
+
+    public static void loadDataFromCSV(File file, ArrayList<Magazine> magazines,
+            ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
+        if (file == null) {
+            System.out.println("No file chosen!");
+            return;
+        }
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                // Split the line by commas to get the data fields
+                String[] fields = line.split(",");
+
+                // Example: Assuming the CSV has a specific format (could be customized)
+                // Format example:
+                // Type, Name, Email, Week Started, Payment Method, Magazine Name (etc.)
+
+                if (fields[0].equalsIgnoreCase("Magazine")) {
+                    // Parse Magazine data
+                    String name = fields[1];
+                    double weeklyCost = Double.parseDouble(fields[2]);
+                    int week = Integer.parseInt(fields[3]);
+                    Magazine magazine = new Magazine(weeklyCost, week, name);
+                    magazines.add(magazine);
+
+                    // Optionally parse supplement data if present
+                    if (fields.length > 4) {
+
+                        for (int i = 4; i < fields.length; i += 2) {
+                            String supplementName = fields[i];
+                            double supplementPrice = Double.parseDouble(fields[i + 1]);
+                            magazine.setSupplement(new Supplement(supplementName, supplementPrice));
+                        }
+                    }
+                } else if (fields[0].equalsIgnoreCase("Paying")) {
+                    // Parse Paying customer data
+                    String name = fields[1];
+                    String email = fields[2];
+                    int weekStarted = Integer.parseInt(fields[3]);
+                    String paymentMethod = fields[4];
+                    Paying paying = new Paying(name, email, weekStarted, paymentMethod);
+                    payingCustomer.add(paying);
+
+                    // Optional: Handle subscription parsing if applicable
+                    if (fields.length > 5) {
+                        for (int i = 5; i < fields.length; i++) {
+                            paying.setSubscription(fields[i]);
+                        }
+                    }
+                } else if (fields[0].equalsIgnoreCase("Associate")) {
+                    // Parse Associate customer data
+                    String name = fields[1];
+                    String email = fields[2];
+                    int weekStarted = Integer.parseInt(fields[3]);
+                    String associatedCustomer = fields[4];
+
+                    // Find the Paying customer that matches the associated customer
+                    Associate associate = new Associate(name, email, weekStarted, associatedCustomer, payingCustomer);
+                    associateCustomer.add(associate);
+
+                    // Optional: Handle subscription parsing if applicable
+                    if (fields.length > 5) {
+                        for (int i = 5; i < fields.length; i++) {
+                            associate.setSubscription(fields[i]);
+                        }
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Error reading the file: " + e.getMessage());
+        }
+    }
+
+    // You can call this function to choose the file and load the data
+    public static void loadDataFromFile(Stage stage, ArrayList<Magazine> magazines,
+            ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
+        File file = chooseFile(stage);
+        loadDataFromCSV(file, magazines, payingCustomer, associateCustomer);
+    }
+
+    public static void saveDataToFile(Stage stage, ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomers,
+            ArrayList<Associate> associateCustomers) {
+        // Create a FileChooser to prompt the user for a save location
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        // Show the save dialog and get the file
+        File file = fileChooser.showSaveDialog(stage);
+
+        // If the user selects a file, proceed to save data
+        if (file != null) {
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+                // Save magazines
+                for (int i = 0; i < magazines.size(); i++) {
+                    Magazine magazine = magazines.get(i);
+                    StringBuilder line = new StringBuilder(String.format("Magazine,%s,%.2f,%d",
+                            magazine.getMagazineName(), // Assuming week number is 1-indexed
+                            magazine.getMagazineCost(),
+                            i // Index is the current index in the list
+                    ));
+
+                    // Add supplements if any
+                    for (int j = 0; j < magazine.getSupplementCount(); j++) { // Use getSupplementCount() instead of
+                                                                              // getSupplementSize()
+                        String supplementName = magazine.getSupplementIndex(j); // Get supplement name
+                        double supplementCost = magazine.getSupplementCost(supplementName); // Get supplement cost for
+                                                                                            // this supplement
+                        line.append(",").append(supplementName).append(",").append(
+                                String.format("%.2f", supplementCost));
+                    }
+
+                    writer.println(line.toString());
+                }
+
+                // Save paying customers
+                for (Paying paying : payingCustomers) {
+                    StringBuilder line = new StringBuilder(String.format("Paying,%s,%s,%d,%s",
+                            paying.getName(),
+                            paying.getEmail(),
+                            paying.getWeekStarted(),
+                            paying.getPaymentType()));
+
+                    for (String magazineName : paying.getSubscriptionList()) {
+                        line.append(",").append(magazineName);
+                    }
+                    writer.println(line.toString());
+                }
+
+                // Save associate customers
+                for (Associate associate : associateCustomers) {
+                    StringBuilder line = new StringBuilder(String.format("Associate,%s,%s,%d,%s",
+                            associate.getName(),
+                            associate.getEmail(),
+                            associate.getWeekStarted(),
+                            associate.getAssociate()));
+
+                    for (String magazineName : associate.getSubscriptionList()) {
+                        line.append(",").append(magazineName);
+                    }
+                    writer.println(line.toString());
+                }
+
+                // Show success alert
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Success");
+                alert.setHeaderText(null);
+                alert.setContentText("Data successfully saved to " + file.getAbsolutePath());
+                alert.showAndWait();
+
+            } catch (IOException e) {
+                // Handle file writing error
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("File Save Error");
+                alert.setContentText("There was an error saving the file: " + e.getMessage());
+                alert.showAndWait();
+            }
+        }
+    }
+
+    public static void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setContentText(message);
