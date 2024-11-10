@@ -22,7 +22,8 @@ Inside the workspace directory, I have 2 csv files:
 
 - To compile the Application, open your terminal into the workspace/project directory
 
-  ![image](https://github.com/user-attachments/assets/b477d3d1-17c6-4836-b7dc-4f9b01ec162c)
+  ![image](https://github.com/user-attachments/assets/444eddd2-1eb0-4c67-9967-744b4fcc3dc7)
+
 
 - Now copy and paste the command below:
 - For Windows: `$javac --module-path "</path/to/javafx-sdk/lib>" --add-modules javafx.controls,javafx.fxml -d bin .\src\*.java`
@@ -44,8 +45,8 @@ Inside the workspace directory, I have 2 csv files:
   ![image](https://github.com/user-attachments/assets/7ec26b46-e847-428a-b62d-01a7445a6254)
 
 1.  `Load From File`: loads fileChooser for you to select a previous session or custom session.
-    a. Navigate to the project directory and click either of the two .csv files inside.
-    b. If you previously saved a session, you can use that session to load the data.
+    1. Navigate to the project directory and click either of the two .csv files inside.
+    2. If you previously saved a session, you can use that session to load the data.
 2.  `Load Hard Coded Data`: loads the data by calling loadData() method inside the program.
 
 - If you have chosen `loadData.csv` or the `Hard Coded Data` options the program will look something like this:
@@ -109,7 +110,7 @@ Inside the workspace directory, I have 2 csv files:
 
 ### Navigate to folder you want to save the data to
 
-![image](https://github.com/user-attachments/assets/0e842fd8-9448-413b-8cc0-d5fb4f75a41c)
+![image](https://github.com/user-attachments/assets/76c3eaab-d967-4287-9d51-0ef61eb412fd)
 
 
 ### Receive Success prompt
