@@ -24,10 +24,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -1189,138 +1190,89 @@ public class Client extends Application {
 
     public static File chooseFile(Stage stage) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Serialized Files", "*.ser"));
 
         return fileChooser.showOpenDialog(stage);
     }
 
-    public static void loadDataFromCSV(File file, ArrayList<Magazine> magazines,
+    @SuppressWarnings("unchecked")
+    public static void loadDataFromFile(Stage stage, ArrayList<Magazine> magazine,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
+        File file = chooseFile(stage);
+
         if (file == null) {
             System.out.println("No file chosen!");
             return;
         }
 
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            // Clear the lists before loading new data
+            magazine.clear();
+            payingCustomer.clear();
+            associateCustomer.clear();
 
-                String[] fields = line.split(",");
-
-                if (fields[0].equalsIgnoreCase("Magazine")) {
-
-                    String name = fields[1];
-                    double weeklyCost = Double.parseDouble(fields[2]);
-                    int week = Integer.parseInt(fields[3]);
-                    Magazine magazine = new Magazine(weeklyCost, week, name);
-                    magazines.add(magazine);
-
-                    if (fields.length > 4) {
-
-                        for (int i = 4; i < fields.length; i += 2) {
-                            String supplementName = fields[i];
-                            double supplementPrice = Double.parseDouble(fields[i + 1]);
-                            magazine.setSupplement(new Supplement(supplementName, supplementPrice));
-                        }
-                    }
-                } else if (fields[0].equalsIgnoreCase("Paying")) {
-
-                    String name = fields[1];
-                    String email = fields[2];
-                    int weekStarted = Integer.parseInt(fields[3]);
-                    String paymentMethod = fields[4];
-                    Paying paying = new Paying(name, email, weekStarted, paymentMethod);
-                    payingCustomer.add(paying);
-
-                    if (fields.length > 5) {
-                        for (int i = 5; i < fields.length; i++) {
-                            paying.setSubscription(fields[i]);
-                        }
-                    }
-                } else if (fields[0].equalsIgnoreCase("Associate")) {
-
-                    String name = fields[1];
-                    String email = fields[2];
-                    int weekStarted = Integer.parseInt(fields[3]);
-                    String associatedCustomer = fields[4];
-
-                    Associate associate = new Associate(name, email, weekStarted, associatedCustomer, payingCustomer);
-                    associateCustomer.add(associate);
-
-                    if (fields.length > 5) {
-                        for (int i = 5; i < fields.length; i++) {
-                            associate.setSubscription(fields[i]);
-                        }
-                    }
-                }
+            // Deserialize magazines list
+            try {
+                ArrayList<Magazine> deserializedMagazine = (ArrayList<Magazine>) ois.readObject();
+                magazine.addAll(deserializedMagazine); // Add the deserialized magazines to the existing list
+            } catch (ClassCastException e) {
+                System.out.println("Error reading magazines list: " + e.getMessage());
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Error reading the file: " + e.getMessage());
+
+            // Deserialize paying customers list
+            try {
+                ArrayList<Paying> deserializedPayingCustomer = (ArrayList<Paying>) ois.readObject();
+                payingCustomer.addAll(deserializedPayingCustomer);
+            } catch (ClassCastException e) {
+                System.out.println("Error reading paying customers list: " + e.getMessage());
+            }
+
+            // Deserialize associate customers list
+            try {
+                ArrayList<Associate> deserializedAssociateCustomer = (ArrayList<Associate>) ois.readObject();
+                associateCustomer.addAll(deserializedAssociateCustomer);
+            } catch (ClassCastException e) {
+                System.out.println("Error reading associate customers list: " + e.getMessage());
+            }
+
+            System.out.println("Data successfully loaded from: " + file.getAbsolutePath());
+
+        } catch (IOException | ClassNotFoundException e) {
+            showAlert("File Load Error", "There was an error loading the file: " + e.getMessage());
         }
+
+        // Debugging
+        System.out.println("Loaded Magazines: ");
+        for (Magazine mags : magazine) {
+            System.out.println("Paying Customer: " + mags.getMagazineName());
+        }
+        System.out.println("Loaded paying customers: ");
+        for (Paying paying : payingCustomer) {
+            System.out.println("Paying Customer: " + paying.getName());
+        }
+
+        System.out.println("Loaded associate customers: ");
+        for (Associate associate : associateCustomer) {
+            System.out.println("Associate Customer: " + associate.getName());
+        }
+
     }
 
-    public static void loadDataFromFile(Stage stage, ArrayList<Magazine> magazines,
+    public static void saveDataToFile(Stage stage, ArrayList<Magazine> magazine,
             ArrayList<Paying> payingCustomer, ArrayList<Associate> associateCustomer) {
-        File file = chooseFile(stage);
-        loadDataFromCSV(file, magazines, payingCustomer, associateCustomer);
-    }
-
-    public static void saveDataToFile(Stage stage, ArrayList<Magazine> magazines, ArrayList<Paying> payingCustomers,
-            ArrayList<Associate> associateCustomers) {
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Serialized Files", "*.ser"));
 
         File file = fileChooser.showSaveDialog(stage);
 
         if (file != null) {
-            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
 
-                // Add Magazines
-                for (int i = 0; i < magazines.size(); i++) {
-                    Magazine magazine = magazines.get(i);
-                    StringBuilder line = new StringBuilder(String.format("Magazine,%s,%.2f,%d",
-                            magazine.getMagazineName(),
-                            magazine.getMagazineCost(),
-                            i));
-                    // Add supplements if any
-                    for (int j = 0; j < magazine.getSupplementCount(); j++) {
-                        String supplementName = magazine.getSupplementIndex(j);
-                        double supplementCost = magazine.getSupplementCost(supplementName);
-                        line.append(",").append(supplementName).append(",").append(
-                                String.format("%.2f", supplementCost));
-                    }
-
-                    writer.println(line.toString());
-                }
-
-                // Add paying customers
-                for (Paying paying : payingCustomers) {
-                    StringBuilder line = new StringBuilder(String.format("Paying,%s,%s,%d,%s",
-                            paying.getName(),
-                            paying.getEmail(),
-                            paying.getWeekStarted(),
-                            paying.getPaymentType()));
-
-                    for (String magazineName : paying.getSubscriptionList()) {
-                        line.append(",").append(magazineName);
-                    }
-                    writer.println(line.toString());
-                }
-
-                // Add associate customers
-                for (Associate associate : associateCustomers) {
-                    StringBuilder line = new StringBuilder(String.format("Associate,%s,%s,%d,%s",
-                            associate.getName(),
-                            associate.getEmail(),
-                            associate.getWeekStarted(),
-                            associate.getAssociate()));
-
-                    for (String magazineName : associate.getSubscriptionList()) {
-                        line.append(",").append(magazineName);
-                    }
-                    writer.println(line.toString());
-                }
+                // Serialize the data to the file
+                oos.writeObject(magazine);
+                oos.writeObject(payingCustomer);
+                oos.writeObject(associateCustomer);
 
                 // Show success alert
                 showSuccess("Success", "Data successfully saved to " + file.getAbsolutePath());

@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Supplement {
+public class Supplement implements Serializable {
 	// Private Variables
 	private String name;
 	private double weeklyCost;

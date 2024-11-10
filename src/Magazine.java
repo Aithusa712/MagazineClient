@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Magazine {
+public class Magazine implements Serializable {
 	// Declare Variables
 	private double magazineWeeklyCost;
 	// private int week;
