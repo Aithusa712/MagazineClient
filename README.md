@@ -1,9 +1,6 @@
 # About this
 
-This java project is an assignment for my Software Architectures module. The task is to create a Magazine Service Client
-with a fully working GUI that can perform CRUD functions. The application is able to load and save the current session into a csv file
-for later use. The application is made using JavaFX, all coded without any help of GUI visual tools such as Scene Builder
-
+This java project is an assignment for my Software Architectures module. The task is to create a Magazine Service Client with a fully Working GUI that can perform basic Crud functions. This application is able to load and save current sessions by deserializing and serializing the objects into a .ser file. The application is made by using a GUI Framework, JavaFx, and without any help from any GUI visual tools such as scene Builder. This program and documentation are developed and submitted before November 10, 2024.
 # Folder Structure
 
 The workspace contains three folders by default, where:
@@ -85,7 +82,7 @@ Inside the workspace directory, I have 2 csv files:
 
 ### Create Supplement Results
 
-![image](https://github.com/user-attachments/assets/21dd74c9-85be-4043-bf59-830ebbcf98fb)
+![image](https://github.com/user-attachments/assets/d1f9a611-61c4-4c88-9678-619145c4021b)
 
 ![image](https://github.com/user-attachments/assets/1a18eaf4-26ed-4294-8b26-b45792eb69fe)
 
@@ -98,8 +95,10 @@ Inside the workspace directory, I have 2 csv files:
   - `Edit Magazine`: Edit the name or cost of a magazine.
   - `Add Supplement`: Add a user-created supplement into a existing magazine.
   - `Save to File`: Save current session, containing all the information loaded and changed.
+  - `Load a new session`: Clear current session and load a new one.
 
-  ![image](https://github.com/user-attachments/assets/7fcae2d0-8320-4465-958b-3d422df8e625)
+  ![image](https://github.com/user-attachments/assets/6246c684-ca24-4c32-9330-dc722ef64bcc)
+
 
 
 ## Save to file and load saved data demo
