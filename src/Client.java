@@ -765,7 +765,18 @@ public class Client extends Application {
         editSaveButton
                 .setOnAction(event -> saveDataToFile(stage, magazines, payingCustomer, associateCustomer));
         editLoadButton
-                .setOnAction(event -> loadDataFromFile(stage, magazines, payingCustomer, associateCustomer));
+                .setOnAction(event -> {
+
+                    loadDataFromFile(stage, magazines, payingCustomer, associateCustomer);
+                    viewLayoutPane.getChildren().clear();
+                    createLayoutPane.getChildren().clear();
+                    editLayoutPane.getChildren().clear();
+                    viewPane(viewLayoutPane, magazines, payingCustomer, associateCustomer);
+                    createPane(viewLayoutPane, createLayoutPane, magazines, payingCustomer, associateCustomer,
+                            tempSupplements);
+                    editPane(stage, editLayoutPane, viewLayoutPane, createLayoutPane, magazines, payingCustomer,
+                            associateCustomer, tempSupplements);
+                });
 
     }
 
