@@ -710,6 +710,10 @@ public class Client extends Application {
                 "-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px;-fx-border-width: 2;-fx-border-color: Black; "
                         +
                         "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30;");
+        Button editLoadButton = new Button("Load a new session");
+        editLoadButton.setStyle("-fx-background-color: LightBlue; -fx-text-fill: Black; -fx-font-size: 14px; "
+                +
+                "-fx-background-radius: 30; -fx-padding: 10 20 10 20; -fx-border-radius: 30;-fx-border-width: 2;-fx-border-color: Black;");
 
         double buttonWidth = 200; // You can adjust this value as needed
 
@@ -719,12 +723,14 @@ public class Client extends Application {
         editMagazineButton.setPrefWidth(buttonWidth);
         editAddSupplementButton.setPrefWidth(buttonWidth);
         editSaveButton.setPrefWidth(buttonWidth);
+        editLoadButton.setPrefWidth(buttonWidth);
 
         editSupplementButton.setMinWidth(buttonWidth);
         editCustomerButton.setMinWidth(buttonWidth);
         editMagazineButton.setMinWidth(buttonWidth);
         editAddSupplementButton.setMinWidth(buttonWidth);
         editSaveButton.setMinWidth(buttonWidth);
+        editLoadButton.setMinWidth(buttonWidth);
 
         // Add the buttons to the layout
 
@@ -735,7 +741,8 @@ public class Client extends Application {
                 editCustomerButton,
                 editMagazineButton,
                 editAddSupplementButton,
-                editSaveButton);
+                editSaveButton,
+                editLoadButton);
         editLayoutPane.add(buttonBox, 0, 0);
 
         // Add event handlers for buttons
@@ -757,6 +764,8 @@ public class Client extends Application {
 
         editSaveButton
                 .setOnAction(event -> saveDataToFile(stage, magazines, payingCustomer, associateCustomer));
+        editLoadButton
+                .setOnAction(event -> loadDataFromFile(stage, magazines, payingCustomer, associateCustomer));
 
     }
 
