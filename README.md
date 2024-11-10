@@ -14,9 +14,9 @@ The workspace contains three folders by default, where:
 
 Inside the workspace directory, I have 2 csv files:
 
-- `loadData.csv`: is the default data I used, which is also the hard coded data inside the program
-  this shouldn't be used for saving. It is exists only to be a backup and testing.
-- `testSaveData.csv`: is the actual test data to be used for loading and saving current or existing sessions.
+- `loadData.ser`: is the default data I used, which is also the hard coded data inside the program
+  this shouldn't be used for saving. It is exists only to be a backup and for testing.
+- `testSaveData.ser`: is the actual test data to be used for loading and saving current or existing sessions.
 
 # Installation and running
 
@@ -49,7 +49,7 @@ Inside the workspace directory, I have 2 csv files:
     2. If you previously saved a session, you can use that session to load the data.
 2.  `Load Hard Coded Data`: loads the data by calling loadData() method inside the program.
 
-- If you have chosen `loadData.csv` or the `Hard Coded Data` options the program will look something like this:
+- If you have chosen `Load From File` or the `Hard Coded Data` options the program will look something like this:
 
   ![image](https://github.com/user-attachments/assets/fe523ad2-ba38-4b17-8da1-e1792673a76b)
 
